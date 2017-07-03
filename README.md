@@ -1,4 +1,7 @@
-SeimiCrawler
+SeimiCrawler 源码学习  
+
+[https://github.com/zhegexiaohuozi/SeimiCrawler](https://github.com/zhegexiaohuozi/SeimiCrawler)
+
 ==========
 An agile,powerful,standalone,distributed crawler framework.
 
