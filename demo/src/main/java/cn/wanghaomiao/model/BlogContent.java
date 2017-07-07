@@ -12,11 +12,11 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 public class BlogContent {
     private Integer id;
 
-    @Xpath("//h1[@class='postTitle']/a/text()|//a[@id='cb_post_title_url']/text()")
+    @Xpath("//span[@class='link_title']//text()")
     private String title;
 
     //也可以这么写 @Xpath("//div[@id='cnblogs_post_body']//text()")
-    @Xpath("//div[@id='cnblogs_post_body']/allText()")
+    @Xpath("//*[@class=\"article_description\"]//text()")
     private String content;
 
     public Integer getId() {
@@ -47,7 +47,7 @@ public class BlogContent {
     public String toString() {
         if (StringUtils.isNotBlank(content)&&content.length()>100){
             //方便查看截断下
-            this.content = StringUtils.substring(content,0,100)+"...";
+//            this.content = StringUtils.substring(content,0,100)+"...";
         }
         return ToStringBuilder.reflectionToString(this);
     }
