@@ -9,6 +9,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.HashSet;
 import java.util.List;
 
@@ -41,17 +45,38 @@ public class StoreInFile extends BaseSeimiCrawler {
             }
             List<Object> imgs = doc.sel("//img/@src");
             for (Object u : imgs) {
-                push(new Request(u.toString(), "saveFile"));
+
+                String url = u.toString();
+                if(!url.startsWith("http")){
+                    url =getAbsoluteURL(response.getRealUrl(),url.toString());
+                }
+                push(new Request( url, "saveFile"));
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
+    @SuppressWarnings("finally")
+    public static String getAbsoluteURL(String baseURI, String relativePath){
+        String abURL=null;
+        try {
+            URI base=new URI(baseURI);//基本网页URI
+            URI abs=base.resolve(relativePath);//解析于上述网页的相对URL，得到绝对URI
+            URL absURL=abs.toURL();//转成URL
+            System.out.println(absURL);
+            abURL = absURL.toString();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        } finally{
+            return abURL;
+        }
+    }
     public void saveFile(Response response) {
         try {
             String fileName = StringUtils.substringAfterLast(response.getUrl(), "/");
-            String path = "F:\\temp\\cnblog" + fileName;
+            String path = "F:\\newTest\\cnblog" + fileName;
             response.saveTo(new File(path));
             logger.info("file done = {}", fileName);
         } catch (Exception e) {
@@ -61,20 +86,20 @@ public class StoreInFile extends BaseSeimiCrawler {
         }
     }
 
-    @Scheduled(cron = "0/5 * * * * ?")
-    public void callByCron() {
-        logger.info("我是一个根据cron表达式执行的调度器，5秒一次");
-//        // 可定时发送一个Request
-        if (crawlerUrl.size()>0){
-            for (String url:crawlerUrl
-                 ) {
-                push(Request.build(url,"start").setSkipDuplicateFilter(true));
-            }
-            crawlerUrl.clear();
-        }else {
-            push(Request.build(startUrls()[0],"start").setSkipDuplicateFilter(true));
-        }
+//    @Scheduled(cron = "0/5 * * * * ?")
+//    public void callByCron() {
+//        logger.info("我是一个根据cron表达式执行的调度器，5秒一次");
+////        // 可定时发送一个Request
+////        if (crawlerUrl.size()>0){
+////            for (String url:crawlerUrl
+////                 ) {
+////                push(Request.build(url,"start").setSkipDuplicateFilter(true));
+////            }
+////            crawlerUrl.clear();
+////        }else {
+////            push(Request.build(startUrls()[0],"start").setSkipDuplicateFilter(true));
+////        }
 //        push(Request.build(startUrls()[0], "start").setSkipDuplicateFilter(true));
-
-    }
+//
+//    }
 }

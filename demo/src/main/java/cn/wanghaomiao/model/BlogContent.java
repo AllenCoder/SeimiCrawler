@@ -12,11 +12,11 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 public class BlogContent {
     private Integer id;
 
-    @Xpath("//span[@class='link_title']//text()")
+    @Xpath("/html/head/title")
     private String title;
 
     //也可以这么写 @Xpath("//div[@id='cnblogs_post_body']//text()")
-    @Xpath("//*[@class=\"article_description\"]//text()")
+    @Xpath("//span")
     private String content;
 
     public Integer getId() {
